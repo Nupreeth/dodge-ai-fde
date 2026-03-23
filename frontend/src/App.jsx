@@ -5,6 +5,7 @@ import ChatPanel from "./ChatPanel.jsx";
 const App = () => {
   const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
   const [highlightedIds, setHighlightedIds] = useState([]);
+  const [isMinimized, setIsMinimized] = useState(false);
   const clearTimerRef = useRef(null);
 
   const handleAnswer = (answer) => {
@@ -58,6 +59,10 @@ const App = () => {
     }, 10000);
   };
 
+  const handleToggleMinimize = () => {
+    setIsMinimized((prev) => !prev);
+  };
+
   return (
     <div
       style={{
@@ -85,12 +90,23 @@ const App = () => {
       </header>
 
       <div style={{ flex: 1, display: "flex" }}>
-        <div style={{ width: "65%", height: "100%" }}>
-          <GraphView highlightedIds={highlightedIds} onGraphData={setGraphData} />
+        <div
+          style={{
+            width: isMinimized ? "0%" : "65%",
+            height: "100%",
+            overflow: "visible",
+          }}
+        >
+          <GraphView
+            highlightedIds={highlightedIds}
+            onGraphData={setGraphData}
+            onToggleMinimize={handleToggleMinimize}
+            isMinimized={isMinimized}
+          />
         </div>
         <div
           style={{
-            width: "35%",
+            width: isMinimized ? "100%" : "35%",
             height: "100%",
             borderLeft: "1px solid #e0e0e0",
             backgroundColor: "#f5f5f5",

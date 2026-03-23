@@ -19,12 +19,18 @@ const TYPE_LABELS = {
   journal_entry_item: "Journal",
 };
 
-const GraphView = ({ highlightedIds = [], onGraphData }) => {
+const GraphView = ({
+  highlightedIds = [],
+  onGraphData,
+  onToggleMinimize,
+  isMinimized,
+}) => {
   const containerRef = useRef(null);
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [size, setSize] = useState({ width: 400, height: 400 });
   const [selectedNode, setSelectedNode] = useState(null);
   const [loadingNeighbors, setLoadingNeighbors] = useState(false);
+  const [hideLabels, setHideLabels] = useState(false);
 
   const highlightedSet = useMemo(
     () => new Set(highlightedIds || []),
@@ -103,7 +109,12 @@ const GraphView = ({ highlightedIds = [], onGraphData }) => {
 
   const nodeVal = (node) => (highlightedSet.has(node.id) ? 10 : 5);
 
-  const nodeLabel = (node) => TYPE_LABELS[node.type] || node.type || "";
+  const nodeLabel = (node) => {
+    if (hideLabels) {
+      return "";
+    }
+    return TYPE_LABELS[node.type] || node.type || "";
+  };
 
   const getConnectionsCount = (nodeId) => {
     return (graphData.links || []).filter((link) => {
@@ -154,6 +165,7 @@ const GraphView = ({ highlightedIds = [], onGraphData }) => {
       <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 8, zIndex: 2 }}>
         <button
           type="button"
+          onClick={onToggleMinimize}
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -168,10 +180,11 @@ const GraphView = ({ highlightedIds = [], onGraphData }) => {
           }}
         >
           <span style={{ fontSize: 12 }}>?</span>
-          Minimize
+          {isMinimized ? "Expand" : "Minimize"}
         </button>
         <button
           type="button"
+          onClick={() => setHideLabels((prev) => !prev)}
           style={{
             display: "inline-flex",
             alignItems: "center",
@@ -186,7 +199,7 @@ const GraphView = ({ highlightedIds = [], onGraphData }) => {
           }}
         >
           <span style={{ fontSize: 12 }}>?</span>
-          Hide Granular Overlay
+          {hideLabels ? "Show Granular Overlay" : "Hide Granular Overlay"}
         </button>
       </div>
 
