@@ -1,8 +1,63 @@
-import React from "react";
+import React, { useRef, useState } from "react";
 import GraphView from "./GraphView.jsx";
 import ChatPanel from "./ChatPanel.jsx";
 
 const App = () => {
+  const [graphData, setGraphData] = useState({ nodes: [], edges: [] });
+  const [highlightedIds, setHighlightedIds] = useState([]);
+  const clearTimerRef = useRef(null);
+
+  const handleAnswer = (answer) => {
+    if (!answer) {
+      setHighlightedIds([]);
+      return;
+    }
+
+    const text = String(answer).toLowerCase();
+    const matches = [];
+    const nodes = graphData?.nodes || [];
+
+    nodes.forEach((node) => {
+      if (!node) {
+        return;
+      }
+
+      const nodeId = node.id ? String(node.id) : "";
+      let matched = false;
+
+      if (nodeId && text.includes(nodeId.toLowerCase())) {
+        matched = true;
+      }
+
+      if (!matched && node.data) {
+        for (const value of Object.values(node.data)) {
+          if (value === null || value === undefined) {
+            continue;
+          }
+          const valueText = String(value).toLowerCase();
+          if (valueText && text.includes(valueText)) {
+            matched = true;
+            break;
+          }
+        }
+      }
+
+      if (matched && nodeId) {
+        matches.push(nodeId);
+      }
+    });
+
+    setHighlightedIds(matches);
+
+    if (clearTimerRef.current) {
+      clearTimeout(clearTimerRef.current);
+    }
+
+    clearTimerRef.current = setTimeout(() => {
+      setHighlightedIds([]);
+    }, 10000);
+  };
+
   return (
     <div
       style={{
@@ -15,7 +70,10 @@ const App = () => {
       }}
     >
       <div style={{ width: "65%", height: "100%" }}>
-        <GraphView />
+        <GraphView
+          highlightedIds={highlightedIds}
+          onGraphData={setGraphData}
+        />
       </div>
       <div
         style={{
@@ -24,7 +82,7 @@ const App = () => {
           borderLeft: "1px solid #e6e6e6",
         }}
       >
-        <ChatPanel />
+        <ChatPanel onAnswer={handleAnswer} />
       </div>
     </div>
   );

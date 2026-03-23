@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 
 const API_BASE = import.meta.env.VITE_API_URL;
@@ -13,12 +13,17 @@ const TYPE_COLORS = {
   outbound_delivery_header: "#1b998b",
 };
 
-const GraphView = () => {
+const GraphView = ({ highlightedIds = [], onGraphData }) => {
   const containerRef = useRef(null);
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [size, setSize] = useState({ width: 400, height: 400 });
   const [selectedNode, setSelectedNode] = useState(null);
   const [loadingNeighbors, setLoadingNeighbors] = useState(false);
+
+  const highlightedSet = useMemo(
+    () => new Set(highlightedIds || []),
+    [highlightedIds]
+  );
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -43,20 +48,24 @@ const GraphView = () => {
       try {
         const response = await fetch(`${API_BASE}/graph`);
         const data = await response.json();
-        setGraphData({
+        const formatted = {
           nodes: data.nodes || [],
           links: (data.edges || []).map((edge) => ({
             source: edge.source,
             target: edge.target,
           })),
-        });
+        };
+        setGraphData(formatted);
+        if (onGraphData) {
+          onGraphData(data);
+        }
       } catch (error) {
         setGraphData({ nodes: [], links: [] });
       }
     };
 
     fetchGraph();
-  }, []);
+  }, [onGraphData]);
 
   const handleNodeClick = async (node) => {
     if (!node) {
@@ -79,7 +88,14 @@ const GraphView = () => {
     }
   };
 
-  const nodeColor = (node) => TYPE_COLORS[node.type] || "#8c8c8c";
+  const nodeColor = (node) => {
+    if (highlightedSet.has(node.id)) {
+      return "#FFD700";
+    }
+    return TYPE_COLORS[node.type] || "#8c8c8c";
+  };
+
+  const nodeVal = (node) => (highlightedSet.has(node.id) ? 10 : 5);
 
   return (
     <div
@@ -96,8 +112,9 @@ const GraphView = () => {
         height={size.height}
         graphData={graphData}
         nodeColor={nodeColor}
-        linkColor={() => "rgba(0,0,0,0.12)"}
         nodeRelSize={5}
+        nodeVal={nodeVal}
+        linkColor={() => "rgba(0,0,0,0.12)"}
         onNodeClick={handleNodeClick}
       />
 

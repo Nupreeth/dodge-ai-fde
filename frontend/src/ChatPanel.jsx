@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 
 const API_BASE = import.meta.env.VITE_API_URL;
 
-const ChatPanel = () => {
+const ChatPanel = ({ onAnswer }) => {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,9 @@ const ChatPanel = () => {
       const data = await response.json();
       const answer = data?.answer || "Something went wrong, please try again.";
       setMessages((prev) => [...prev, { role: "assistant", content: answer }]);
+      if (onAnswer) {
+        onAnswer(answer);
+      }
     } catch (error) {
       setMessages((prev) => [
         ...prev,
