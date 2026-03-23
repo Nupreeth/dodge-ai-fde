@@ -112,12 +112,12 @@ const App = () => {
         </button>
       </header>
 
-      <div style={{ flex: 1, display: "flex" }}>
+      <div style={{ flex: 1, display: "flex", minHeight: 0, overflow: "hidden" }}>
         <div
           style={{
             width: isMinimized ? "0%" : "65%",
             height: "100%",
-            overflow: "visible",
+            overflow: "hidden",
           }}
         >
           <GraphView
@@ -132,6 +132,7 @@ const App = () => {
             height: "100%",
             borderLeft: "1px solid #e0e0e0",
             backgroundColor: "#f5f5f5",
+            overflow: "hidden",
           }}
         >
           <ChatPanel onAnswer={handleAnswer} />
