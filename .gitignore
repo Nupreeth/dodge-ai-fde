@@ -1,0 +1,20 @@
+# Environment files
+.env
+**/.env
+
+# Python cache
+__pycache__/
+**/__pycache__/
+
+# Data artifacts
+backend/data/
+data/
+
+# Node modules
+node_modules/
+**/node_modules/
+
+# Virtual environments
+venv/
+.venv/
+backend/venv/
