@@ -62,6 +62,7 @@ const ChatPanel = ({ onAnswer }) => {
           borderRadius: 12,
           padding: "16px 18px",
           marginBottom: 12,
+          flexShrink: 0,
         }}
       >
         <div style={{ fontWeight: 700, fontSize: 16 }}>Chat with Graph</div>
@@ -174,6 +175,7 @@ const ChatPanel = ({ onAnswer }) => {
           fontSize: 12,
           color: "#7a7a7a",
           margin: "8px 4px 10px",
+          flexShrink: 0,
         }}
       >
         <span
@@ -198,6 +200,7 @@ const ChatPanel = ({ onAnswer }) => {
           borderRadius: 12,
           backgroundColor: "#ffffff",
           border: "1px solid #e6e6e6",
+          flexShrink: 0,
         }}
       >
         <input
