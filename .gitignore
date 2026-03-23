@@ -12,7 +12,6 @@ __pycache__/
 # Data artifacts
 backend/data/
 data/
-sap-order-to-cash-dataset/
 
 # Node modules
 node_modules/
