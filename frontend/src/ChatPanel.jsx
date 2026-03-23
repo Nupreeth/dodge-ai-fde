@@ -51,8 +51,11 @@ const ChatPanel = ({ onAnswer }) => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
+        minHeight: 0,
+        overflow: "hidden",
         backgroundColor: "#f5f5f5",
         padding: "16px 14px",
+        boxSizing: "border-box",
       }}
     >
       <div
@@ -74,6 +77,7 @@ const ChatPanel = ({ onAnswer }) => {
       <div
         style={{
           flex: 1,
+          minHeight: 0,
           overflowY: "auto",
           display: "flex",
           flexDirection: "column",
