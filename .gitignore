@@ -1,6 +1,9 @@
 # Environment files
 .env
 **/.env
+backend/.env
+frontend/.env
+backend.env
 
 # Python cache
 __pycache__/
@@ -9,6 +12,7 @@ __pycache__/
 # Data artifacts
 backend/data/
 data/
+sap-order-to-cash-dataset/
 
 # Node modules
 node_modules/

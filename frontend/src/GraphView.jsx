@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import ForceGraph2D from "react-force-graph-2d";
 
-const API_BASE = import.meta.env.VITE_API_URL || "http://localhost:8000";
+const API_BASE = import.meta.env.VITE_API_URL;
 
 const TYPE_COLORS = {
   sales_order_header: "#2f6bff",
