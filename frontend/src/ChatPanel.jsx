@@ -51,29 +51,33 @@ const ChatPanel = ({ onAnswer }) => {
         display: "flex",
         flexDirection: "column",
         height: "100%",
-        backgroundColor: "#ffffff",
+        backgroundColor: "#f5f5f5",
+        padding: "16px 14px",
       }}
     >
       <div
         style={{
-          padding: "20px 24px",
-          fontSize: 18,
-          fontWeight: 600,
-          borderBottom: "1px solid #ededed",
+          backgroundColor: "#ffffff",
+          border: "1px solid #e6e6e6",
+          borderRadius: 12,
+          padding: "16px 18px",
+          marginBottom: 12,
         }}
       >
-        Chat with Graph
+        <div style={{ fontWeight: 700, fontSize: 16 }}>Chat with Graph</div>
+        <div style={{ fontSize: 12, color: "#7a7a7a", marginTop: 4 }}>
+          Order to Cash
+        </div>
       </div>
 
       <div
         style={{
           flex: 1,
           overflowY: "auto",
-          padding: "20px 24px",
           display: "flex",
           flexDirection: "column",
-          gap: 12,
-          background: "#fafafa",
+          gap: 16,
+          padding: "8px 4px",
         }}
       >
         {messages.length === 0 && (
@@ -82,31 +86,78 @@ const ChatPanel = ({ onAnswer }) => {
           </div>
         )}
 
-        {messages.map((message, index) => (
-          <div
-            key={`${message.role}-${index}`}
-            style={{
-              display: "flex",
-              justifyContent: message.role === "user" ? "flex-end" : "flex-start",
-            }}
-          >
-            <div
-              style={{
-                maxWidth: "80%",
-                padding: "10px 14px",
-                borderRadius: 16,
-                backgroundColor:
-                  message.role === "user" ? "#2f6bff" : "#e6e6e6",
-                color: message.role === "user" ? "#ffffff" : "#222222",
-                fontSize: 14,
-                lineHeight: 1.4,
-                whiteSpace: "pre-wrap",
-              }}
-            >
-              {message.content}
+        {messages.map((message, index) => {
+          if (message.role === "assistant") {
+            return (
+              <div key={`assistant-${index}`} style={{ display: "flex", gap: 12 }}>
+                <div
+                  style={{
+                    width: 34,
+                    height: 34,
+                    borderRadius: "50%",
+                    backgroundColor: "#111111",
+                    color: "#ffffff",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    fontWeight: 700,
+                    fontSize: 14,
+                  }}
+                >
+                  D
+                </div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 700, fontSize: 13 }}>Dodge AI</div>
+                  <div style={{ fontSize: 12, color: "#7a7a7a", marginBottom: 6 }}>
+                    Graph Agent
+                  </div>
+                  <div
+                    style={{
+                      backgroundColor: "#ffffff",
+                      border: "1px solid #e2e2e2",
+                      borderRadius: 12,
+                      padding: "10px 12px",
+                      fontSize: 14,
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    {message.content}
+                  </div>
+                </div>
+              </div>
+            );
+          }
+
+          return (
+            <div key={`user-${index}`} style={{ display: "flex", justifyContent: "flex-end" }}>
+              <div style={{ maxWidth: "85%", textAlign: "right" }}>
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: 8, marginBottom: 6 }}>
+                  <div style={{ fontWeight: 600, fontSize: 12, color: "#4a4a4a" }}>You</div>
+                  <div
+                    style={{
+                      width: 28,
+                      height: 28,
+                      borderRadius: "50%",
+                      backgroundColor: "#d1d1d1",
+                    }}
+                  />
+                </div>
+                <div
+                  style={{
+                    backgroundColor: "#1a1a1a",
+                    color: "#ffffff",
+                    borderRadius: 12,
+                    padding: "10px 12px",
+                    fontSize: 14,
+                    lineHeight: 1.5,
+                  }}
+                >
+                  {message.content}
+                </div>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
 
         {loading && (
           <div style={{ color: "#666", fontSize: 13 }}>Thinking...</div>
@@ -115,44 +166,70 @@ const ChatPanel = ({ onAnswer }) => {
         <div ref={bottomRef} />
       </div>
 
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 8,
+          fontSize: 12,
+          color: "#7a7a7a",
+          margin: "8px 4px 10px",
+        }}
+      >
+        <span
+          style={{
+            width: 8,
+            height: 8,
+            borderRadius: "50%",
+            backgroundColor: "#22c55e",
+            display: "inline-block",
+          }}
+        />
+        Dodge AI is awaiting instructions
+      </div>
+
       <form
         onSubmit={sendMessage}
         style={{
           display: "flex",
-          gap: 8,
-          padding: "16px 20px",
-          borderTop: "1px solid #ededed",
+          flexDirection: "column",
+          gap: 10,
+          padding: "14px",
+          borderRadius: 12,
           backgroundColor: "#ffffff",
+          border: "1px solid #e6e6e6",
         }}
       >
         <input
           type="text"
           value={input}
           onChange={(event) => setInput(event.target.value)}
-          placeholder="Type your question..."
+          placeholder="Analyze anything"
           style={{
-            flex: 1,
-            padding: "10px 12px",
-            borderRadius: 10,
-            border: "1px solid #d9d9d9",
+            border: "none",
+            outline: "none",
             fontSize: 14,
+            padding: "8px 4px",
+            backgroundColor: "transparent",
           }}
         />
-        <button
-          type="submit"
-          disabled={loading || !input.trim()}
-          style={{
-            padding: "10px 16px",
-            borderRadius: 10,
-            border: "none",
-            backgroundColor: loading || !input.trim() ? "#aac0ff" : "#2f6bff",
-            color: "#ffffff",
-            fontWeight: 600,
-            cursor: loading || !input.trim() ? "not-allowed" : "pointer",
-          }}
-        >
-          Send
-        </button>
+        <div style={{ display: "flex", justifyContent: "flex-end" }}>
+          <button
+            type="submit"
+            disabled={loading || !input.trim()}
+            style={{
+              padding: "8px 16px",
+              borderRadius: 10,
+              border: "none",
+              backgroundColor: loading || !input.trim() ? "#bdbdbd" : "#7c7c7c",
+              color: "#ffffff",
+              fontWeight: 600,
+              cursor: loading || !input.trim() ? "not-allowed" : "pointer",
+            }}
+          >
+            Send
+          </button>
+        </div>
       </form>
     </div>
   );

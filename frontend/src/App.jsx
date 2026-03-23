@@ -62,27 +62,42 @@ const App = () => {
     <div
       style={{
         display: "flex",
+        flexDirection: "column",
         width: "100vw",
         height: "100vh",
-        backgroundColor: "#ffffff",
-        margin: 0,
-        padding: 0,
+        backgroundColor: "#f5f5f5",
       }}
     >
-      <div style={{ width: "65%", height: "100%" }}>
-        <GraphView
-          highlightedIds={highlightedIds}
-          onGraphData={setGraphData}
-        />
-      </div>
-      <div
+      <header
         style={{
-          width: "35%",
-          height: "100%",
-          borderLeft: "1px solid #e6e6e6",
+          height: 48,
+          backgroundColor: "#ffffff",
+          borderBottom: "1px solid #e0e0e0",
+          display: "flex",
+          alignItems: "center",
+          padding: "0 20px",
+          fontFamily: "Inter, system-ui, sans-serif",
+          fontSize: 14,
         }}
       >
-        <ChatPanel onAnswer={handleAnswer} />
+        <span style={{ color: "#8b8b8b", marginRight: 6 }}>Mapping /</span>
+        <span style={{ color: "#111111", fontWeight: 600 }}>Order to Cash</span>
+      </header>
+
+      <div style={{ flex: 1, display: "flex" }}>
+        <div style={{ width: "65%", height: "100%" }}>
+          <GraphView highlightedIds={highlightedIds} onGraphData={setGraphData} />
+        </div>
+        <div
+          style={{
+            width: "35%",
+            height: "100%",
+            borderLeft: "1px solid #e0e0e0",
+            backgroundColor: "#f5f5f5",
+          }}
+        >
+          <ChatPanel onAnswer={handleAnswer} />
+        </div>
       </div>
     </div>
   );
