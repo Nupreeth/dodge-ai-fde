@@ -33,7 +33,21 @@ KNOWN_QUERIES = {
         "ON bdi.salesOrder = odi.salesOrder AND bdi.salesOrderItem = odi.salesOrderItem "
         "WHERE odi.deliveryDocument IS NULL"
     ),
+    "trace the full flow": (
+        "SELECT bdh.billingDocument, bdh.billingDocumentType, bdh.creationDate, "
+        "bdh.totalNetAmount, bdh.soldToParty, "
+        "bdi.salesOrder, bdi.salesOrderItem, bdi.material, bdi.billingQuantity, bdi.netAmount, "
+        "bp.businessPartnerFullName as customer, "
+        "jei.accountingDocument, jei.glAccount, jei.amountInTransactionCurrency "
+        "FROM billing_document_headers bdh "
+        "LEFT JOIN billing_document_items bdi ON bdh.billingDocument = bdi.billingDocument "
+        "LEFT JOIN business_partners bp ON bdh.soldToParty = bp.businessPartner "
+        "LEFT JOIN journal_entry_items_accounts_receivable jei ON bdh.accountingDocument = jei.accountingDocument "
+        "WHERE bdh.billingDocument = (SELECT billingDocument FROM billing_document_headers LIMIT 1)"
+    ),
 }
+
+
 
 
 def match_known_query(message: str):
