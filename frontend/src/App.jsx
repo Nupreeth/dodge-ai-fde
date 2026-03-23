@@ -80,13 +80,35 @@ const App = () => {
           borderBottom: "1px solid #e0e0e0",
           display: "flex",
           alignItems: "center",
+          justifyContent: "space-between",
           padding: "0 20px",
           fontFamily: "Inter, system-ui, sans-serif",
           fontSize: 14,
         }}
       >
-        <span style={{ color: "#8b8b8b", marginRight: 6 }}>Mapping /</span>
-        <span style={{ color: "#111111", fontWeight: 600 }}>Order to Cash</span>
+        <div>
+          <span style={{ color: "#8b8b8b", marginRight: 6 }}>Mapping /</span>
+          <span style={{ color: "#111111", fontWeight: 600 }}>Order to Cash</span>
+        </div>
+        <button
+          type="button"
+          onClick={handleToggleMinimize}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            backgroundColor: "#1a1a1a",
+            color: "#ffffff",
+            border: "none",
+            borderRadius: 20,
+            padding: "6px 14px",
+            fontSize: 13,
+            cursor: "pointer",
+          }}
+        >
+          <span style={{ fontSize: 12 }}>?</span>
+          {isMinimized ? "Expand" : "Minimize"}
+        </button>
       </header>
 
       <div style={{ flex: 1, display: "flex" }}>
@@ -100,7 +122,6 @@ const App = () => {
           <GraphView
             highlightedIds={highlightedIds}
             onGraphData={setGraphData}
-            onToggleMinimize={handleToggleMinimize}
             isMinimized={isMinimized}
           />
         </div>

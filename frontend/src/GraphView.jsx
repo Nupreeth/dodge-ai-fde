@@ -19,12 +19,17 @@ const TYPE_LABELS = {
   journal_entry_item: "Journal",
 };
 
-const GraphView = ({
-  highlightedIds = [],
-  onGraphData,
-  onToggleMinimize,
-  isMinimized,
-}) => {
+const LEGEND_ITEMS = [
+  { label: "Sales Order", color: "#93c5fd" },
+  { label: "Billing Doc", color: "#93c5fd" },
+  { label: "Delivery", color: "#93c5fd" },
+  { label: "Product", color: "#f9a8a8" },
+  { label: "Partner", color: "#f9a8a8" },
+  { label: "Payment", color: "#f9a8a8" },
+  { label: "Journal", color: "#f9a8a8" },
+];
+
+const GraphView = ({ highlightedIds = [], onGraphData, isMinimized }) => {
   const containerRef = useRef(null);
   const [graphData, setGraphData] = useState({ nodes: [], links: [] });
   const [size, setSize] = useState({ width: 400, height: 400 });
@@ -109,12 +114,7 @@ const GraphView = ({
 
   const nodeVal = (node) => (highlightedSet.has(node.id) ? 10 : 5);
 
-  const nodeLabel = (node) => {
-    if (hideLabels) {
-      return "";
-    }
-    return TYPE_LABELS[node.type] || node.type || "";
-  };
+  const nodeLabel = (node) => TYPE_LABELS[node.type] || node.type || "";
 
   const getConnectionsCount = (nodeId) => {
     return (graphData.links || []).filter((link) => {
@@ -162,61 +162,81 @@ const GraphView = ({
         backgroundColor: "#f5f5f5",
       }}
     >
-      <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 8, zIndex: 2 }}>
-        <button
-          type="button"
-          onClick={onToggleMinimize}
+      {!isMinimized && (
+        <div style={{ position: "absolute", top: 12, left: 12, display: "flex", gap: 8, zIndex: 2 }}>
+          <button
+            type="button"
+            onClick={() => setHideLabels((prev) => !prev)}
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 6,
+              backgroundColor: "#1a1a1a",
+              color: "#ffffff",
+              border: "none",
+              borderRadius: 20,
+              padding: "6px 14px",
+              fontSize: 13,
+              cursor: "pointer",
+            }}
+          >
+            <span style={{ fontSize: 12 }}>?</span>
+            {hideLabels ? "Show Granular Overlay" : "Hide Granular Overlay"}
+          </button>
+        </div>
+      )}
+
+      {!isMinimized && (
+        <ForceGraph2D
+          width={size.width}
+          height={size.height}
+          graphData={graphData}
+          nodeColor={nodeColor}
+          nodeRelSize={5}
+          nodeVal={nodeVal}
+          nodeLabel={nodeLabel}
+          linkColor={() => "rgba(59, 130, 246, 0.25)"}
+          onNodeClick={handleNodeClick}
+          backgroundColor="#f5f5f5"
+        />
+      )}
+
+      {!hideLabels && !isMinimized && (
+        <div
           style={{
-            display: "inline-flex",
-            alignItems: "center",
+            position: "absolute",
+            bottom: 16,
+            left: 16,
+            backgroundColor: "#ffffff",
+            border: "1px solid #e2e2e2",
+            borderRadius: 12,
+            padding: "10px 12px",
+            fontSize: 12,
+            color: "#4a4a4a",
+            display: "flex",
+            flexDirection: "column",
             gap: 6,
-            backgroundColor: "#1a1a1a",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: 20,
-            padding: "6px 14px",
-            fontSize: 13,
-            cursor: "pointer",
+            boxShadow: "0 8px 16px rgba(0, 0, 0, 0.08)",
           }}
         >
-          <span style={{ fontSize: 12 }}>?</span>
-          {isMinimized ? "Expand" : "Minimize"}
-        </button>
-        <button
-          type="button"
-          onClick={() => setHideLabels((prev) => !prev)}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            backgroundColor: "#1a1a1a",
-            color: "#ffffff",
-            border: "none",
-            borderRadius: 20,
-            padding: "6px 14px",
-            fontSize: 13,
-            cursor: "pointer",
-          }}
-        >
-          <span style={{ fontSize: 12 }}>?</span>
-          {hideLabels ? "Show Granular Overlay" : "Hide Granular Overlay"}
-        </button>
-      </div>
+          {LEGEND_ITEMS.map((item) => (
+            <div key={item.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <span
+                style={{
+                  width: 8,
+                  height: 8,
+                  borderRadius: "50%",
+                  backgroundColor: item.color,
+                  display: "inline-block",
+                }}
+              />
+              {item.label}
+            </div>
+          ))}
+        </div>
+      )}
 
-      <ForceGraph2D
-        width={size.width}
-        height={size.height}
-        graphData={graphData}
-        nodeColor={nodeColor}
-        nodeRelSize={5}
-        nodeVal={nodeVal}
-        nodeLabel={nodeLabel}
-        linkColor={() => "rgba(59, 130, 246, 0.25)"}
-        onNodeClick={handleNodeClick}
-        backgroundColor="#f5f5f5"
-      />
-
-      {selectedNode && (
+      {selectedNode && !isMinimized && (
         <div
           style={{
             position: "absolute",
