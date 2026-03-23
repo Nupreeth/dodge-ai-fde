@@ -15,6 +15,35 @@ load_dotenv()
 client = Groq(api_key=os.getenv("GROQ_API_KEY"))
 
 
+KNOWN_QUERIES = {
+    "highest number of billing documents": (
+        "SELECT bdi.material, COUNT(DISTINCT bdi.billingDocument) as num_billing_documents "
+        "FROM billing_document_items bdi "
+        "GROUP BY bdi.material ORDER BY num_billing_documents DESC LIMIT 1"
+    ),
+    "delivered but not billed": (
+        "SELECT DISTINCT odi.salesOrder FROM outbound_delivery_items odi "
+        "LEFT JOIN billing_document_items bdi "
+        "ON odi.salesOrder = bdi.salesOrder AND odi.salesOrderItem = bdi.salesOrderItem "
+        "WHERE bdi.billingDocument IS NULL"
+    ),
+    "billed without delivery": (
+        "SELECT DISTINCT bdi.salesOrder FROM billing_document_items bdi "
+        "LEFT JOIN outbound_delivery_items odi "
+        "ON bdi.salesOrder = odi.salesOrder AND bdi.salesOrderItem = odi.salesOrderItem "
+        "WHERE odi.deliveryDocument IS NULL"
+    ),
+}
+
+
+def match_known_query(message: str):
+    lower = message.lower()
+    for keyword, sql in KNOWN_QUERIES.items():
+        if keyword in lower:
+            return sql
+    return None
+
+
 def _format_results(results: List[Dict]) -> str:
     if not results:
         return "No matching records were found."
@@ -33,6 +62,15 @@ def _format_results(results: List[Dict]) -> str:
 
 
 def ask(message: str) -> str:
+    known_sql = match_known_query(message)
+    if known_sql:
+        try:
+            results = run_query(known_sql)
+        except Exception as e:
+            print(f"Error: {e}")
+            return "Something went wrong, please try again."
+        return _format_results(results)
+
     system_instruction = (
         "You are a data analyst assistant for a SAP Order to Cash dataset. "
         "You have access to these SQLite tables and their columns:\n"
